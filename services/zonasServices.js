@@ -120,9 +120,50 @@ const createZona = async (zonaData) => {
     }
   };
   
-  
+
+
+
+  const getById = async (idZona)=>{
+
+    console.log("zona=>", idZona)
+    try {
+      const zonaDoc = await db.collection('zonas').doc(idZona).get();
+      if(!zonaDoc.exists){
+        throw Error (`La zona con ID ${idZona} no existe`);
+
+      }
+      const zonaData = zonaDoc.data();
+      const horarioReferenciado = zonaData.horarioRef;
+
+      let horarioData = null;
+
+      if (horarioReferenciado) {
+        try {
+          const horarioDoc = await db.collection('horarios').doc(horarioReferenciado).get();
+          if (horarioDoc.exists) {
+            horarioData = horarioDoc.data();
+          }
+        } catch (err) {
+          console.warn(`Error al obtener el horario para la zona ${idZona}`);
+        }
+      }
+
+      return {
+        id: zonaDoc.id,
+        nombre: zonaData.nombre,
+        color: zonaData.color,
+        coordenadas: zonaData.coordenadas || [],
+        horario: horarioData || {},
+      };
+
+    } catch (error) {
+      console.error(`Error al obtener la zona por ID ${idZona}:`, error);
+      throw new Error('Error al obtener la zona');
+      
+    }
+  }
 
   
 
 
-export { createZona, getZonas, createZonaConhorario, getAllZonasHorario, searchByName };
+export { createZona, getZonas, createZonaConhorario, getAllZonasHorario, searchByName, getById};

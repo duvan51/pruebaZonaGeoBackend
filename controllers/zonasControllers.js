@@ -2,7 +2,8 @@ import {
     createZona,
     createZonaConhorario, 
     getAllZonasHorario,
-    searchByName
+    searchByName,
+    getById
 }from '../services/zonasServices.js'
 
 
@@ -48,8 +49,20 @@ const searchZonas = async (req, res) => {
   }
 };
 
+const getZonaById = async (req, res) => {
+  const idZona = req.params.id;
+  try {
+    const zonas = await getById(idZona);
+    res.status(200).json(zonas);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+
 
 
 
   
-export { addZona, listZonas, crearZonaHorario, searchZonas};
+export { addZona, listZonas, crearZonaHorario, searchZonas, getZonaById};
